@@ -142,7 +142,7 @@
         .talk-btn:hover{
             filter:brightness(1.1);
         }
-        /* 电影字幕弹窗 */
+        /* 电影字幕弹窗 【仅此处修改滚动文字样式】 */
         .scroll-text-wrap {
             position: fixed;
             inset: 0;
@@ -170,14 +170,15 @@
             line-height: 2.2;
             font-size: 18px;
             padding: 40px 20px;
+            /* 修改1：起始位移改为translateY(100vh) → 100%，适配容器高度 */
+            transform: translateY(100%);
             animation: textScroll 28s linear forwards;
-            transform: translateY(100vh);
         }
         @keyframes textScroll {
             0 {
-                transform: translateY(100vh);
+                transform: translateY(100%);
             }
-            100 {
+            100% {
                 transform: translateY(-100%);
             }
         }
@@ -362,10 +363,8 @@
 </head>
 <body>
     <div class="music-icon-wrap" id="musicBtn">🎵</div>
-
     <canvas id="particleCanvas"></canvas>
     <canvas id="fireworkCanvas"></canvas>
-
     <div class="container">
         <div class="cake-icon">🎂</div>
         <h1 class="main-title">生日快乐</h1>
@@ -373,7 +372,6 @@
         <button class="birthday-btn" id="openCardBtn">打开生日贺卡</button>
         <button class="talk-btn" id="talkBtn">我想对你说</button>
     </div>
-
     <!-- 电影滚动字幕弹窗 -->
     <div class="scroll-text-wrap" id="scrollWrap">
         <button class="close-scroll" id="closeScrollBtn">关闭</button>
@@ -405,17 +403,14 @@
             </div>
         </div>
     </div>
-
     <!--成长时间轴DOM-->
     <div class="timeline-wrap">
         <div class="timeline-inner">
             <div class="timeline-track" id="timelineTrack"></div>
         </div>
     </div>
-
     <!-- 底部版权 -->
     <div class="copyright">© 2008-2026 ©Fe | 用数行代码送上给夏子凤的祝福</div>
-
     <div class="card-wrap" id="cardModal">
         <div class="card">
             <h2>🎂 生日快乐 🎂</h2>
@@ -427,22 +422,18 @@
             <button class="card-close" id="closeCardBtn">关闭贺卡</button>
         </div>
     </div>
-
     <audio id="bgAudio" loop>
         <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" type="audio/mpeg">
     
-
 <script>
 // ===================== 两首背景音乐，自行替换链接 =====================
 const homeMusic = "https://www.9188888888.top/music/birthday.mp3"; //首页音乐
 const talkMusic = "https://www.9188888888.top/music/chengnan.mp3"; //告白弹窗音乐
 // =====================================================================
-
 const audio = document.getElementById('bgAudio');
 const musicBtn = document.getElementById('musicBtn');
 let isPlaying = false;
 let currentMusicUrl = homeMusic;
-
 // 切换播放暂停
 function toggleMusic() {
     if (isPlaying) {
@@ -459,7 +450,6 @@ function toggleMusic() {
     }
 }
 musicBtn.addEventListener('click', toggleMusic);
-
 // 切换音乐函数
 function switchMusic(url) {
     audio.pause();
@@ -471,14 +461,12 @@ function switchMusic(url) {
         audio.play();
     }
 }
-
 // 关闭告白弹窗统一方法
 function closeTalkModal(){
     const scrollWrap = document.getElementById('scrollWrap');
     scrollWrap.classList.remove('show');
     switchMusic(homeMusic);
 }
-
 // 页面加载自动播放首页音乐
 function tryAutoPlay() {
     audio.src = homeMusic;
@@ -498,7 +486,6 @@ function tryAutoPlay() {
     });
 }
 window.addEventListener('load', tryAutoPlay);
-
 function createFallItem() {
     const icons = ['🎂', '🎈', '⭐', '🎉', '🎁', '💖'];
     const el = document.createElement('div');
@@ -511,11 +498,9 @@ function createFallItem() {
     setTimeout(() => el.remove(), dur * 1000);
 }
 setInterval(createFallItem, 1200);
-
 const openCardBtn = document.getElementById("openCardBtn");
 const closeCardBtn = document.getElementById("closeCardBtn");
 const cardModal = document.getElementById("cardModal");
-
 function rainCake() {
     let count = 45;
     for (let i = 0; i < count; i++) {
@@ -539,14 +524,12 @@ function rainCake() {
         cakeFall();
     }
 }
-
 openCardBtn.addEventListener("click", () => {
     rainCake();
     setTimeout(() => {
         cardModal.classList.add("show");
     }, 800);
 });
-
 closeCardBtn.addEventListener("click", () => {
     cardModal.classList.remove("show");
     setTimeout(() => {
@@ -556,28 +539,25 @@ closeCardBtn.addEventListener("click", () => {
         startTextFirework();
     }, 1000);
 });
-
 // 告白弹窗 切换音乐 + 动画结束自动关闭
 const talkBtn = document.getElementById('talkBtn');
 const scrollWrap = document.getElementById('scrollWrap');
 const closeScrollBtn = document.getElementById('closeScrollBtn');
 const scrollText = document.getElementById('scrollText');
-
 talkBtn.addEventListener('click', () => {
     scrollWrap.classList.add('show');
     switchMusic(talkMusic);
-    // 重置滚动动画
+    // 【仅修改此处动画重置逻辑】强制回流后再开启动画，修复文字不滚动
     scrollText.style.animation = 'none';
+    scrollText.offsetHeight; // 强制页面重绘
     setTimeout(() => {
         scrollText.style.animation = 'textScroll 28s linear forwards';
     }, 50);
 });
-
 // 手动关闭按钮
 closeScrollBtn.addEventListener('click', closeTalkModal);
 // 滚动播放完毕自动关闭
 scrollText.addEventListener('animationend', closeTalkModal);
-
 const particleCanvas = document.getElementById("particleCanvas");
 const ctx = particleCanvas.getContext("2d");
 let w, h;
@@ -587,7 +567,6 @@ function resize() {
 }
 resize();
 window.addEventListener('resize', resize);
-
 let particles = [];
 class Particle {
     constructor(x, y) {
@@ -657,7 +636,6 @@ function loopParticle() {
     requestAnimationFrame(loopParticle);
 }
 loopParticle();
-
 const fwCanvas = document.getElementById("fireworkCanvas");
 const fwCtx = fwCanvas.getContext("2d");
 fwCanvas.width = window.innerWidth;
@@ -830,7 +808,6 @@ function drawTextFireworkParticles(time) {
         fwCtx.beginPath();
         fwCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         fwCtx.fillStyle = p.color;
-        fwCtx.fill();
         fwCtx.restore();
     }
 }
