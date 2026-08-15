@@ -1,43 +1,43 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>祝夏子凤生日快乐</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:"Microsoft Yahei",sans-serif;}
-body{
-  min-height:100vh;
-  background:#050520;
+*{margin:0;padding:0;box-sizing:border-box;}
+body {
+  background:#050522;
   color:#fff;
+  font-family:system-ui, sans-serif;
+  min-height:100vh;
   overflow-x:hidden;
-  position:relative;
 }
-/* 音乐图标按钮右上角 */
 .music-btn{
   position:fixed;
-  top:16px;
-  right:16px;
-  width:44px;height:44px;
+  top:12px;
+  right:12px;
+  width:42px;height:42px;
   border-radius:50%;
-  background:rgba(255,255,255,0.15);
+  background:rgba(255,255,255,0.12);
   border:2px solid #ffd700;
   color:#ffd700;
-  font-size:22px;
-  display:flex;align-items:center;justify-content:center;
-  z-index:9999;
+  font-size:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:999;
   cursor:pointer;
-  user-select:none;
 }
-/* 烟花画布全屏 */
 #fireworkCanvas{
   position:fixed;
-  top:0;left:0;
-  width:100vw;height:100vh;
+  inset:0;
+  width:100vw;
+  height:100vh;
   pointer-events:none;
   z-index:1;
 }
-.main-wrap{
+.container{
   position:relative;
   z-index:2;
   min-height:100vh;
@@ -49,32 +49,31 @@ body{
   text-align:center;
 }
 h1{
-  font-size:clamp(2rem,6vw,4rem);
+  font-size:clamp(1.8rem,5vw,3.4rem);
   color:#ffdd77;
-  text-shadow:0 0 12px #ffaa22,0 0 24px #ff6622;
+  text-shadow:0 0 10px #ffaa22;
   margin-bottom:40px;
 }
-.btns-group{
+.btn-group{
   display:flex;
-  gap:20px;
+  gap:16px;
   flex-wrap:wrap;
   justify-content:center;
-  margin-bottom:80px;
+  margin-bottom:70px;
 }
 .btn{
-  padding:14px 32px;
-  font-size:18px;
+  padding:12px 28px;
+  font-size:17px;
   border:none;
-  border-radius:12px;
-  background:linear-gradient(135deg,#ff7088,#ffbc42);
+  border-radius:10px;
+  background:linear-gradient(135deg,#ff6e86,#ffbc40);
   color:#111;
   font-weight:bold;
   cursor:pointer;
-  transition:0.3s;
 }
-.btn:hover{transform:scale(1.08);box-shadow:0 0 20px rgba(255,180,80,0.6);}
+.btn:active{transform:scale(0.97);}
 
-/* 弹窗通用遮罩 */
+/* 弹窗遮罩 */
 .mask{
   position:fixed;
   inset:0;
@@ -85,30 +84,32 @@ h1{
   justify-content:center;
   padding:15px;
 }
-.pop-card{
-  width:min(90vw,520px);
-  background:#1a1a38;
-  border-radius:16px;
-  padding:24px;
+.card-box{
+  width:min(92vw,500px);
+  background:#181836;
   border:2px solid #ffcc66;
+  border-radius:14px;
+  padding:22px;
 }
-.pop-card h2{color:#ffdd88;margin-bottom:16px;}
-.pop-card textarea{
+.card-box h2{color:#ffdd88;margin-bottom:14px;}
+textarea{
   width:100%;
-  min-height:140px;
-  background:#0f0f28;
+  min-height:130px;
+  background:#0e0e28;
   color:#fff;
   border:1px solid #ffbb55;
   border-radius:8px;
-  padding:12px;
+  padding:10px;
   font-size:16px;
-  resize:vertical;
 }
-.pop-bottom{
-  display:flex;gap:12px;margin-top:16px;justify-content:flex-end;
+.bottom-bar{
+  margin-top:14px;
+  display:flex;
+  justify-content:flex-end;
 }
-/* 电影滚动字幕弹窗 */
-.scroll-mask{
+
+/* 片尾滚动字幕 */
+.scroll-wrap{
   position:fixed;
   inset:0;
   background:#000;
@@ -116,319 +117,295 @@ h1{
   display:none;
   overflow:hidden;
 }
-.scroll-input-wrap{
+.scroll-input-area{
   position:absolute;
-  top:20px;left:20px;right:20px;
-  z-index:5;
+  top:15px;
+  left:15px;
+  right:15px;
+  z-index:10;
 }
-.scroll-input-wrap textarea{
-  width:100%;
-  max-width:600px;
-  height:120px;
-  background:#111;color:#fff;border:1px solid #ffcc00;padding:10px;
+.scroll-close{
+  position:absolute;
+  top:12px;
+  right:12px;
+  z-index:11;
+  padding:6px 14px;
+  background:#ff4455;
+  color:white;
+  border:none;
   border-radius:6px;
-}
-.scroll-text-container{
-  width:100%;
-  height:100vh;
-  position:relative;
+  cursor:pointer;
 }
 .scroll-text{
   position:absolute;
   width:90%;
-  max-width:600px;
+  max-width:580px;
   left:50%;
   transform:translateX(-50%);
   bottom:-100vh;
-  font-size:clamp(18px,3vw,26px);
+  font-size:clamp(17px,3vw,24px);
   color:#ffdd77;
   line-height:2;
   text-align:center;
   white-space:pre-wrap;
 }
-.close-scroll{
-  position:absolute;
-  top:16px;right:16px;
-  z-index:10;
-  padding:8px 16px;
-  background:#ff4455;color:#fff;border:none;border-radius:6px;cursor:pointer;
-}
 
-/* 时间轴区域 */
-.timeline-wrap{
+/* 时间轴 */
+.timeline-box{
   width:100%;
-  max-width:1100px;
-  margin-top:60px;
+  max-width:1050px;
+  height:130px;
   overflow:hidden;
-  position:relative;
-  height:140px;
   border-top:1px solid rgba(255,220,120,0.3);
   border-bottom:1px solid rgba(255,220,120,0.3);
 }
 .timeline-inner{
   display:flex;
-  height:100%;
   align-items:center;
-  gap:40px;
+  height:100%;
+  gap:36px;
   white-space:nowrap;
-  animation:timelineLoop 25s linear infinite;
+  animation:run 24s linear infinite;
 }
-@keyframes timelineLoop{
+@keyframes run{
   0%{transform:translateX(0);}
   100%{transform:translateX(-50%);}
 }
-.timeline-item{
-  display:inline-flex;
+.t-item{
+  display:flex;
   flex-direction:column;
   align-items:center;
-  min-width:70px;
+  min-width:64px;
 }
-.t-year{font-size:20px;color:#ffdd77;font-weight:bold;}
-.t-age{font-size:15px;color:#ffaaaa;margin-top:4px;}
+.t-year{font-size:19px;color:#ffdd77;font-weight:bold;}
+.t-age{font-size:14px;color:#ffaaaa;margin-top:3px;}
 
 audio{display:none;}
 </style>
 </head>
 <body>
-<audio id="bgMusic" loop>
-  <source src="bg.mp3" type="audio/mpeg">
+<div class="music-btn" id="musicBtn">🔊</div>
+<canvas id="fire"></canvas>
 
-<audio id="talkMusic" loop>
-  <source src="talk.mp3" type="audio/mpeg">
-
-
-
-<div class="music-btn" id="musicToggle">🔊</div>
-<canvas id="fireworkCanvas"></canvas>
-
-<div class="main-wrap">
+<div class="container">
   <h1>🎉 祝夏子凤生日快乐 🎉</h1>
-  <div class="btns-group">
-    <button class="btn" id="openCardBtn">庆生卡片</button>
-    <button class="btn" id="openTalkBtn">我想对你说</button>
+  <div class="btn-group">
+    <button class="btn" id="openCard">庆生卡片</button>
+    <button class="btn" id="openTalk">我想对你说</button>
   </div>
-
-  <!-- 时间轴容器 -->
-  <div class="timeline-wrap">
-    <div class="timeline-inner" id="timelineBox"></div>
+  <div class="timeline-box">
+    <div class="timeline-inner" id="timeLineDom"></div>
   </div>
 </div>
 
-<!-- 庆生卡片弹窗 -->
+<!-- 贺卡弹窗 -->
 <div class="mask" id="cardMask">
-  <div class="pop-card">
-    <h2>✍️写下你的祝福</h2>
-    <textarea id="cardText" placeholder="在这里输入你想对夏子凤说的话..."></textarea>
-    <div class="pop-bottom">
-      <button class="btn" id="closeCardBtn">关闭贺卡</button>
+  <div class="card-box">
+    <h2>✍️写下祝福</h2>
+    <textarea id="cardTextarea" placeholder="输入你想说的话..."></textarea>
+    <div class="bottom-bar">
+      <button class="btn" id="closeCard">关闭贺卡</button>
     </div>
   </div>
 </div>
 
-<!-- 电影滚动字幕弹窗 -->
-<div class="scroll-mask" id="scrollMask">
-  <div class="scroll-input-wrap">
-    <textarea id="scrollInput" placeholder="自定义电影片尾滚动文字，多行输入即可"></textarea>
+<!-- 片尾滚动字幕 -->
+<div class="scroll-wrap" id="scrollWrap">
+  <div class="scroll-input-area">
+    <textarea id="scrollTextarea" placeholder="自定义片尾滚动文字，支持多行"></textarea>
   </div>
-  <button class="close-scroll" id="closeScrollBtn">关闭</button>
-  <div class="scroll-text-container">
-    <div class="scroll-text" id="scrollDom"></div>
-  </div>
+  <button class="scroll-close" id="closeScroll">关闭</button>
+  <div class="scroll-text" id="scrollDom"></div>
 </div>
 
+<audio id="bgAudio" loop>
+  <source src="bg.mp3">
+
+<audio id="talkAudio" loop>
+  <source src="talk.mp3">
+
+
 <script>
-document.addEventListener('DOMContentLoaded',function(){
-// ========== 1.生成时间轴 2008零岁~2026 ==========
-const timelineBox = document.getElementById('timelineBox');
-const startYear = 2008;
-const endYear = 2026;
-let htmlStr = '';
-for(let y = startYear;y<=endYear;y++){
-  const age = y - startYear;
-  htmlStr += `<div class="timeline-item"><div class="t-year">${y}年</div><div class="t-age">${age}岁</div></div>`;
-}
-// 复制一份实现无缝循环
-timelineBox.innerHTML = htmlStr + htmlStr;
+window.onload = function(){
+  // 1、生成时间轴 2008~2026
+  const timeLineDom = document.getElementById("timeLineDom");
+  let tpl = "";
+  for(let y=2008;y<=2026;y++){
+    let age = y - 2008;
+    tpl += `<div class="t-item"><div class="t-year">${y}年</div><div class="t-age">${age}岁</div></div>`;
+  }
+  timeLineDom.innerHTML = tpl + tpl;
 
-// ========== 2.音频控制 ==========
-const bgMusic = document.getElementById('bgMusic');
-const talkMusic = document.getElementById('talkMusic');
-const musicToggle = document.getElementById('musicToggle');
-let musicPlayState = true;
+  // 2、音频
+  const bgAudio = document.getElementById("bgAudio");
+  const talkAudio = document.getElementById("talkAudio");
+  const musicBtn = document.getElementById("musicBtn");
+  let audioOn = true;
 
-// 页面自动播放，浏览器策略需要一次交互兜底
-document.addEventListener('click',()=>{
-  bgMusic.play().catch(e=>{});
-},{once:true});
+  document.body.addEventListener("click",function(){
+    bgAudio.play().catch(()=>{});
+  },{once:true});
 
-musicToggle.onclick = ()=>{
-  if(musicPlayState){
-    bgMusic.pause();talkMusic.pause();
-    musicToggle.innerText = '🔇';
-    musicPlayState = false;
-  }else{
-    if(document.getElementById('scrollMask').style.display === 'none' || document.getElementById('scrollMask').style.display === ''){
-      bgMusic.play();
+  musicBtn.onclick = function(){
+    if(audioOn){
+      bgAudio.pause();
+      talkAudio.pause();
+      musicBtn.innerText = "🔇";
+      audioOn = false;
     }else{
-      talkMusic.play();
-    }
-    musicToggle.innerText = '🔊';
-    musicPlayState = true;
-  }
-}
-
-// ==========3.庆生卡片弹窗 ==========
-const cardMask = document.getElementById('cardMask');
-const openCardBtn = document.getElementById('openCardBtn');
-const closeCardBtn = document.getElementById('closeCardBtn');
-openCardBtn.onclick = ()=>{
-  cardMask.style.display = 'flex';
-}
-closeCardBtn.onclick = ()=>{
-  cardMask.style.display = 'none';
-  // 关闭贺卡触发文字烟花：夏子凤生日快乐
-  launchTextFirework("夏子凤生日快乐");
-}
-
-// ==========4.我想对你说：电影滚动字幕 ==========
-const scrollMask = document.getElementById('scrollMask');
-const openTalkBtn = document.getElementById('openTalkBtn');
-const closeScrollBtn = document.getElementById('closeScrollBtn');
-const scrollInput = document.getElementById('scrollInput');
-const scrollDom = document.getElementById('scrollDom');
-openTalkBtn.onclick = ()=>{
-  scrollMask.style.display = 'block';
-  bgMusic.pause();
-  talkMusic.currentTime = 0;
-  talkMusic.play().catch(e=>{});
-  // 启动滚动
-  startScroll();
-}
-closeScrollBtn.onclick = ()=>{
-  scrollMask.style.display = 'none';
-  talkMusic.pause();
-  bgMusic.play().catch(e=>{});
-}
-function startScroll(){
-  scrollDom.innerText = scrollInput.value || "致夏子凤\n愿岁岁平安，万事胜意\n每一年都闪闪发光\n生日快乐！";
-  scrollDom.style.bottom = "-100vh";
-  scrollDom.style.transition = "none";
-  setTimeout(()=>{
-    scrollDom.style.transition = "bottom 22s linear";
-    scrollDom.style.bottom = "120vh";
-  },50);
-}
-
-// ==========5.烟花特效canvas 纯代码无图片 ==========
-const canvas = document.getElementById('fireworkCanvas');
-const ctx = canvas.getContext('2d');
-let w,h;
-function resize(){
-  w = canvas.width = window.innerWidth;
-  h = canvas.height = window.innerHeight;
-}
-resize();
-window.addEventListener('resize',resize);
-
-class Particle{
-  constructor(x,y,color,vx,vy,size,life){
-    this.x=x;this.y=y;this.color=color;
-    this.vx=vx;this.vy=vy;
-    this.size=size;
-    this.life=life;this.maxLife=life;
-  }
-  update(){
-    this.x += this.vx;
-    this.y += this.vy;
-    this.vy += 0.06;
-    this.life--;
-  }
-  draw(){
-    const alpha = this.life/this.maxLife;
-    ctx.beginPath();
-    ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
-    ctx.fillStyle = this.color.replace("1)",alpha+")");
-    ctx.fill();
-  }
-}
-let particles = [];
-const colors = [
-  "rgba(255,210,80,1)","rgba(255,80,120,1)","rgba(80,200,255,1)",
-  "rgba(120,255,160,1)","rgba(240,120,255,1)","rgba(255,140,60,1)"
-];
-
-//普通烟花
-function createFirework(){
-  const x = Math.random()*w;
-  const y = h;
-  const targetY = h*0.15 + Math.random()*h*0.35;
-  const color = colors[Math.floor(Math.random()*colors.length)];
-  let rocket = {x,y,vy:-7-Math.random()*3,targetY,color};
-  function fly(){
-    rocket.y += rocket.vy;
-    if(rocket.y <= rocket.targetY){
-      //爆炸
-      for(let i=0;i<80;i++){
-        const angle = Math.PI*2*i/80;
-        const sp = 1+Math.random()*3;
-        particles.push(new Particle(rocket.x,rocket.y,rocket.color,Math.cos(angle)*sp,Math.sin(angle)*sp,2+Math.random()*2,100+Math.random()*60));
+      if(document.getElementById("scrollWrap").style.display === "block"){
+        talkAudio.play().catch(()=>{});
+      }else{
+        bgAudio.play().catch(()=>{});
       }
-      return;
+      musicBtn.innerText = "🔊";
+      audioOn = true;
     }
-    requestAnimationFrame(fly);
   }
-  fly();
-}
 
-//文字烟花：把文字点阵变成烟花粒子
-function launchTextFirework(text){
-  const tempCanvas = document.createElement('canvas');
-  const tctx = tempCanvas.getContext('2d');
-  tempCanvas.width = w*0.8;
-  tempCanvas.height = 220;
-  tctx.fillStyle="#fff";
-  tctx.font = "bold 80px sans-serif";
-  tctx.textAlign="center";
-  tctx.fillText(text,tempCanvas.width/2,130);
-  const imgData = tctx.getImageData(0,0,tempCanvas.width,tempCanvas.height);
-  const offsetX = w/2 - tempCanvas.width/2;
-  const offsetY = h*0.35;
-  //遍历像素
-  for(let px=0;px<imgData.width;px+=6){
-    for(let py=0;py<imgData.height;py+=6){
-      const idx = (py*imgData.width+px)*4;
-      const r = imgData.data[idx];
-      if(r>128){
-        const cx = offsetX+px;
-        const cy = offsetY+py;
-        const c = colors[Math.floor(Math.random()*colors.length)];
-        particles.push(new Particle(cx,cy,c,(Math.random()-0.5)*1.2,(Math.random()-0.5)*1.2,2.5,140));
+  //3、庆生卡片
+  const cardMask = document.getElementById("cardMask");
+  document.getElementById("openCard").onclick = function(){
+    cardMask.style.display = "flex";
+  }
+  document.getElementById("closeCard").onclick = function(){
+    cardMask.style.display = "none";
+    drawWordFire("夏子凤生日快乐");
+  }
+
+  //4、我想对你说片尾滚动
+  const scrollWrap = document.getElementById("scrollWrap");
+  const scrollDom = document.getElementById("scrollDom");
+  const scrollTextarea = document.getElementById("scrollTextarea");
+
+  document.getElementById("openTalk").onclick = function(){
+    scrollWrap.style.display = "block";
+    bgAudio.pause();
+    talkAudio.currentTime = 0;
+    talkAudio.play().catch(()=>{});
+    runScroll();
+  }
+  document.getElementById("closeScroll").onclick = function(){
+    scrollWrap.style.display = "none";
+    talkAudio.pause();
+    bgAudio.play().catch(()=>{});
+  }
+  function runScroll(){
+    scrollDom.innerText = scrollTextarea.value || "致夏子凤\n岁岁常欢愉\n年年皆胜意\n生日快乐！";
+    scrollDom.style.bottom = "-100vh";
+    scrollDom.style.transition = "none";
+    setTimeout(()=>{
+      scrollDom.style.transition = "bottom 22s linear";
+      scrollDom.style.bottom = "120vh";
+    },60);
+  }
+
+  //5、烟花 canvas
+  const canvas = document.getElementById("fire");
+  const ctx = canvas.getContext("2d");
+  let W,H;
+  function resize(){
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener("resize",resize);
+
+  let particles = [];
+  const colorList = [
+    "rgba(255,212,80,1)",
+    "rgba(255,85,125,1)",
+    "rgba(82,205,255,1)",
+    "rgba(124,255,164,1)",
+    "rgba(242,124,255,1)"
+  ];
+
+  class Particle{
+    constructor(x,y,c,vx,vy,size,life){
+      this.x=x;this.y=y;this.c=c;
+      this.vx=vx;this.vy=vy;
+      this.size=size;
+      this.life=life;this.max=life;
+    }
+    update(){
+      this.x += this.vx;
+      this.y += this.vy;
+      this.vy += 0.06;
+      this.life -=1;
+    }
+    render(){
+      let a = this.life / this.max;
+      ctx.beginPath();
+      ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+      ctx.fillStyle = this.c.replace("1)",a+")");
+      ctx.fill();
+    }
+  }
+
+  //普通烟花
+  function fireOne(){
+    let x = Math.random()*W;
+    let startY = H;
+    let targetY = H*0.12 + Math.random()*H*0.38;
+    let c = colorList[Math.floor(Math.random()*colorList.length)];
+    let rocket = {x:x,y:startY,vy:-7-Math.random()*2.5,target:targetY,color:c};
+    function fly(){
+      rocket.y += rocket.vy;
+      if(rocket.y <= rocket.target){
+        for(let i=0;i<75;i++){
+          let ang = Math.PI*2*i/75;
+          let sp = 1.2+Math.random()*2.2;
+          particles.push(new Particle(rocket.x,rocket.y,rocket.color,Math.cos(ang)*sp,Math.sin(ang)*sp,2,90+Math.random()*60));
+        }
+        return;
+      }
+      requestAnimationFrame(fly);
+    }
+    fly();
+  }
+
+  //文字烟花
+  function drawWordFire(text){
+    let tempCvs = document.createElement("canvas");
+    let tctx = tempCvs.getContext("2d");
+    tempCvs.width = W*0.75;
+    tempCvs.height = 200;
+    tctx.fillStyle="#ffffff";
+    tctx.font="bold 76px sans-serif";
+    tctx.textAlign="center";
+    tctx.fillText(text,tempCvs.width/2,120);
+    let img = tctx.getImageData(0,0,tempCvs.width,tempCvs.height);
+    let offX = W/2 - tempCvs.width/2;
+    let offY = H*0.32;
+    for(let px=0;px<img.width;px+=6){
+      for(let py=0;py<img.height;py+=6){
+        let i = (py*img.width + px)*4;
+        if(img.data[i]>120){
+          let cx = offX + px;
+          let cy = offY + py;
+          let cc = colorList[Math.floor(Math.random()*colorList.length)];
+          particles.push(new Particle(cx,cy,cc,(Math.random()-0.5)*1.1,(Math.random()-0.5)*1.1,2.4,130));
+        }
       }
     }
   }
-}
 
-//渲染循环
-function loop(){
-  ctx.fillStyle = "rgba(5,5,32,0.18)";
-  ctx.fillRect(0,0,w,h);
-  for(let i=particles.length-1;i>=0;i--){
-    const p = particles[i];
-    p.update();
-    p.draw();
-    if(p.life <=0){
-      particles.splice(i,1);
+  function loop(){
+    ctx.fillStyle="rgba(5,5,34,0.17)";
+    ctx.fillRect(0,0,W,H);
+    for(let i=particles.length-1;i>=0;i--){
+      let p = particles[i];
+      p.update();
+      p.render();
+      if(p.life <=0){
+        particles.splice(i,1);
+      }
     }
+    requestAnimationFrame(loop);
   }
-  requestAnimationFrame(loop);
+  loop();
+  setInterval(fireOne,1300);
 }
-loop();
-//定时自动烟花
-setInterval(()=>{
-  createFirework();
-},1400);
-
-});
 </script>
 </body>
 </html>
