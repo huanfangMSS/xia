@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生日快乐 🎂</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            overflow: hidden;
+            height: 100vh;
+            background: linear-gradient(135deg, #1a0633 0%, #2c1054 50%, #401a66 100%);
+            font-family: "Microsoft YaHei", sans-serif;
+            color: #fff;
+            user-select: none;
+        }
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 2;
+        }
+        #fireworkCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 1;
+        }
+        /* 音乐图标恢复原始白色半透明底色 */
+        .music-icon-wrap {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 99;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.25);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            cursor: pointer;
+            font-size:22px;
+        }
+        .music-icon-wrap.playing{
+            animation: musicRotate 3s linear infinite;
+        }
+        @keyframes musicRotate {
+            from{transform:rotate(0deg);}
+            to{transform:rotate(360deg);}
+        }
+        .container {
+            position: relative;
+            z-index: 3;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .cake-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite ease-in-out;
+        }
+        @keyframes bounce {
+            0%,100% {transform: translateY(0);}
+            50% {transform: translateY(-15px);}
+        }
+        .main-title {
+            font-size: clamp(2.5rem,8vw,4.5rem);
+            background: linear-gradient(90deg,#ffd700,#ff6b9d,#ffd700);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gradientFlow 3s linear infinite;
+            font-weight: bold;
+            margin-bottom: 16px;
+        }
+        @keyframes gradientFlow {
+            to {background-position: 200% center;}
+        }
+        .sub-text {
+            font-size: clamp(1rem,3vw,1.4rem);
+            color: #ffebf5;
+            margin-bottom:40px;
+            opacity:0.9;
+        }
+        .birthday-btn{
+            padding:14px 36px;
+            font-size:18px;
+            font-weight:bold;
+            border:none;
+            border-radius:50px;
+            cursor:pointer;
+            background:linear-gradient(90deg,#ff6b9d,#ffbc52);
+            color:#fff;
+            box-shadow: 0 6px 22px rgba(255,107,157,0.45);
+            transition: all 0.18s ease;
+            margin-bottom: 20px;
+        }
+        .birthday-btn:active{
+            transform:scale(0.92);
+            box-shadow:0 2px 8px rgba(255,107,157,0.3);
+        }
+        .birthday-btn:hover{
+            filter:brightness(1.1);
+        }
+        /* 告白按钮 */
+        .talk-btn {
+            padding:12px 32px;
+            font-size:17px;
+            font-weight:bold;
+            border:none;
+            border-radius:50px;
+            cursor:pointer;
+            background:linear-gradient(90deg,#7b61ff,#48d1ff);
+            color:#fff;
+            box-shadow: 0 5px 18px rgba(123,97,255,0.4);
+            transition: all 0.18s ease;
+        }
+        .talk-btn:active{
+            transform:scale(0.92);
+            box-shadow:0 2px 6 rgba(123,97,255,0.3);
+        }
+        .talk-btn:hover{
+            filter:brightness(1.1);
+        }
+        /* 电影字幕弹窗 */
+        .scroll-text-wrap {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.92);
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s ease;
+            overflow: hidden;
+        }
+        .scroll-text-wrap.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .scroll-box {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        .scroll-content {
+            width: min(600px, 90%);
+            color: #fffef0;
+            text-align: center;
+            line-height: 2.2;
+            font-size: 18px;
+            padding: 40px 20px;
+            animation: textScroll 28s linear forwards;
+            transform: translateY(100vh);
+        }
+        @keyframes textScroll {
+            0 {
+                transform: translateY(100vh);
+            }
+            100 {
+                transform: translateY(-100%);
+            }
+        }
+        .scroll-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 40px;
+            color: #ffd700;
+        }
+        .scroll-line {
+            margin: 14px 0;
+        }
+        .scroll-end {
+            margin-top: 60px;
+            font-size: 22px;
+            color: #ff6b9d;
+        }
+        .close-scroll {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 201;
+            padding: 8px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.3);
+            background: transparent;
+            color: white;
+            cursor: pointer;
+        }
+        .fall-item{
+            position:fixed;
+            z-index:0;
+            font-size:28px;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            0%{transform:translateY(-60px) rotate(0deg);opacity:1;}
+            100%{transform:translateY(105vh) rotate(360deg);opacity:0;}
+        }
+        .burst-cake{
+            position:fixed;
+            font-size:42px;
+            z-index:10;
+            pointer-events:none;
+        }
+        .card-wrap {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        .card-wrap.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .card {
+            width: min(520px, 92vw);
+            background: linear-gradient(145deg, #fff0f6, #ffe8ef);
+            border-radius: 20px;
+            padding: 40px 30px;
+            color: #882e58;
+            text-align: center;
+            box-shadow: 0 10px 45px rgba(255, 100, 140, 0.35);
+            transform: scale(0.75);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .card-wrap.show .card {
+            transform: scale(1);
+        }
+        .card h2 {
+            font-size: clamp(1.8rem, 6vw, 2.4rem);
+            margin-bottom: 16px;
+        }
+        .card p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+        .card-close {
+            padding: 10px 28px;
+            border-radius: 30px;
+            border: none;
+            background: #ff6b9d;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .card-close:active {
+            transform: scale(0.94);
+        }
+        /* 时间轴 恢复中间连接线 */
+        .timeline-wrap {
+            position: fixed;
+            bottom: 50px;
+            left: 0;
+            width: 100%;
+            z-index: 10;
+            padding: 0 16px;
+            pointer-events:none;
+        }
+        .timeline-inner {
+            pointer-events:auto;
+            max-width:960px;
+            margin:0 auto;
+            overflow:hidden;
+            border-radius:20px;
+            background:rgba(255,255,255,0.07);
+            backdrop-filter:blur(14px);
+            border:1px solid rgba(255,255,0.14);
+            padding:30px 0;
+        }
+        .timeline-track {
+            display:flex;
+            gap:52px;
+            padding:0 50px;
+            cursor:grab;
+            will-change: transform;
+        }
+        .timeline-track:active {
+            cursor:grabbing;
+        }
+        .year-item {
+            flex:0 0 80px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            position:relative;
+        }
+        /* 时间轴连接线 */
+        .year-item::before {
+            content: "";
+            position: absolute;
+            top: 7px;
+            left: 50%;
+            width: calc(100% + 52px);
+            height: 3px;
+            background: linear-gradient(90deg, #ffd700, #ff6b9d);
+            z-index: -1;
+            transform: translateX(50%);
+        }
+        .year-item:last-child::before {
+            display: none;
+        }
+        .dot {
+            border-radius:50%;
+            background:linear-gradient(135deg,#ffd700,#ff6b9d);
+            box-shadow:0 0 14px #ffb3c8;
+            margin-bottom:12px;
+            transition:all 0.3s ease;
+        }
+        .year-num {
+            font-size:17px;
+            color:#fffdfd;
+            font-weight:500;
+        }
+        .age-text {
+            font-size:13px;
+            color:#ffd2e0;
+            margin-top:4px;
+            opacity:0.85;
+        }
+        /* 底部版权文字 */
+        .copyright {
+            position: fixed;
+            bottom: 12px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            z-index: 9;
+            font-size: 12px;
+            color: rgba(255,255,255,0.45);
+            letter-spacing:1px;
+        }
+    </style>
+</head>
+<body>
+    <div class="music-icon-wrap" id="musicBtn">🎵</div>
+
+    <canvas id="particleCanvas"></canvas>
+    <canvas id="fireworkCanvas"></canvas>
+
+    <div class="container">
+        <div class="cake-icon">🎂</div>
+        <h1 class="main-title">生日快乐</h1>
+        <p class="sub-text">愿所有美好与幸运都如约而至✨</p>
+        <button class="birthday-btn" id="openCardBtn">打开生日贺卡</button>
+        <button class="talk-btn" id="talkBtn">我想对你说</button>
+    </div>
+
+    <!-- 电影滚动字幕弹窗 -->
+    <div class="scroll-text-wrap" id="scrollWrap">
+        <button class="close-scroll" id="closeScrollBtn">关闭</button>
+        <div class="scroll-box">
+            <div class="scroll-content" id="scrollText">
+                <div class="scroll-title">致夏子凤</div>
+                <div class="scroll-line">时光匆匆，从2008到2026</div>
+                <div class="scroll-line">十八年春夏秋冬，每一岁都闪闪发光</div>
+                <div class="scroll-line">今天是属于你的特别日子</div>
+                <div class="scroll-line">愿你永远被温柔和好运包围</div>
+                <div class="scroll-line">不用奔赴大海，也能春暖花开</div>
+                <div class="scroll-line">所有烦恼随风消散</div>
+                <div class="scroll-line">想要的美好全部如期而至</div>
+                <div class="scroll-line">保持热爱，永远鲜活自由</div>
+                <div class="scroll-line">前路坦荡，万事顺意</div>
+                <div class="scroll-line">往后每一年生日都有惊喜相伴</div>
+                <div class="scroll-line">平安健康，喜乐无忧</div>
+                <div class="scroll-line">永远做最耀眼、最开心的自己</div>
+                <div class="scroll-line">你我之间有过欢乐也有过悲伤</div>
+                <div class="scroll-line">我们从结识到分别不过两年</div>
+                <div class="scroll-line">谢谢你带给我的一切也抱歉我可能没有带给你什么</div>
+                <div class="scroll-line">这是认识以来第二次给你过生日了（希望以后还可以）</div>
+                <div class="scroll-line">希望小寿星今天能够忘记咱俩之间的不愉快</div>
+                <div class="scroll-line">请你继续前进，我将原路返回</div>
+                <div class="scroll-line">再见，同桌</div>
+                <div class="scroll-line">依旧祝愿你卡池不保底，单发出奇迹，盲盒盲袋一发入魂！</div>
+                <div class="scroll-end">生日快乐，夏子凤，记得天天开心！</div>
+                <div class="scroll-line">——致独一无二的你</div>
+            </div>
+        </div>
+    </div>
+
+    <!--成长时间轴DOM-->
+    <div class="timeline-wrap">
+        <div class="timeline-inner">
+            <div class="timeline-track" id="timelineTrack"></div>
+        </div>
+    </div>
+
+    <!-- 底部版权 -->
+    <div class="copyright">© 2008-2026 ©Fe | 用数行代码送上给夏子凤的祝福</div>
+
+    <div class="card-wrap" id="cardModal">
+        <div class="card">
+            <h2>🎂 生日快乐 🎂</h2>
+            <p>
+                愿你岁岁无忧，万事顺遂<br>
+                祝你生日快乐呀夏子凤~<br>
+                祝你卡池不保底，单抽出奇迹✨
+            </p>
+            <button class="card-close" id="closeCardBtn">关闭贺卡</button>
+        </div>
+    </div>
+
+    <audio id="bgAudio" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" type="audio/mpeg">
+    
+
+<script>
+// ===================== 两首背景音乐，自行替换链接 =====================
+const homeMusic = "https://www.9188888888.top/music/birthday.mp3"; //首页音乐
+const talkMusic = "https://www.9188888888.top/music/chengnan.mp3"; //告白弹窗音乐
+// =====================================================================
+
+const audio = document.getElementById('bgAudio');
+const musicBtn = document.getElementById('musicBtn');
+let isPlaying = false;
+let currentMusicUrl = homeMusic;
+
+// 切换播放暂停
+function toggleMusic() {
+    if (isPlaying) {
+        audio.pause();
+        musicBtn.classList.remove('playing');
+        isPlaying = false;
+    } else {
+        audio.play().then(() => {
+            musicBtn.classList.add('playing');
+            isPlaying = true;
+        }).catch(err => {
+            console.log("播放失败，浏览器需要用户交互后播放", err);
+        });
+    }
+}
+musicBtn.addEventListener('click', toggleMusic);
+
+// 切换音乐函数
+function switchMusic(url) {
+    audio.pause();
+    audio.currentTime = 0;
+    currentMusicUrl = url;
+    audio.src = url;
+    audio.load();
+    if(isPlaying){
+        audio.play();
+    }
+}
+
+// 关闭告白弹窗统一方法
+function closeTalkModal(){
+    const scrollWrap = document.getElementById('scrollWrap');
+    scrollWrap.classList.remove('show');
+    switchMusic(homeMusic);
+}
+
+// 页面加载自动播放首页音乐
+function tryAutoPlay() {
+    audio.src = homeMusic;
+    currentMusicUrl = homeMusic;
+    audio.play().then(() => {
+        musicBtn.classList.add('playing');
+        isPlaying = true;
+    }).catch(e => {
+        document.body.addEventListener('click', function firstClick() {
+            audio.src = homeMusic;
+            audio.play().then(() => {
+                musicBtn.classList.add('playing');
+                isPlaying = true;
+            });
+            document.body.removeEventListener('click', firstClick);
+        });
+    });
+}
+window.addEventListener('load', tryAutoPlay);
+
+function createFallItem() {
+    const icons = ['🎂', '🎈', '⭐', '🎉', '🎁', '💖'];
+    const el = document.createElement('div');
+    el.className = "fall-item";
+    el.innerText = icons[Math.floor(Math.random() * icons.length)];
+    el.style.left = Math.random() * 100 + '%';
+    const dur = 6 + Math.random() * 8;
+    el.style.animationDuration = dur + 's';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), dur * 1000);
+}
+setInterval(createFallItem, 1200);
+
+const openCardBtn = document.getElementById("openCardBtn");
+const closeCardBtn = document.getElementById("closeCardBtn");
+const cardModal = document.getElementById("cardModal");
+
+function rainCake() {
+    let count = 45;
+    for (let i = 0; i < count; i++) {
+        const cake = document.createElement("div");
+        cake.className = "burst-cake";
+        cake.innerText = "🎂";
+        cake.style.left = Math.random() * 100 + "vw";
+        cake.style.top = "-60px";
+        document.body.appendChild(cake);
+        let posY = -60;
+        const speed = 2 + Math.random() * 4;
+        function cakeFall() {
+            posY += speed;
+            cake.style.top = posY + "px";
+            if (posY < window.innerHeight + 80) {
+                requestAnimationFrame(cakeFall);
+            } else {
+                cake.remove();
+            }
+        }
+        cakeFall();
+    }
+}
+
+openCardBtn.addEventListener("click", () => {
+    rainCake();
+    setTimeout(() => {
+        cardModal.classList.add("show");
+    }, 800);
+});
+
+closeCardBtn.addEventListener("click", () => {
+    cardModal.classList.remove("show");
+    setTimeout(() => {
+        burstFireworksForBirthday();
+    }, 300);
+    setTimeout(() => {
+        startTextFirework();
+    }, 1000);
+});
+
+// 告白弹窗 切换音乐 + 动画结束自动关闭
+const talkBtn = document.getElementById('talkBtn');
+const scrollWrap = document.getElementById('scrollWrap');
+const closeScrollBtn = document.getElementById('closeScrollBtn');
+const scrollText = document.getElementById('scrollText');
+
+talkBtn.addEventListener('click', () => {
+    scrollWrap.classList.add('show');
+    switchMusic(talkMusic);
+    // 重置滚动动画
+    scrollText.style.animation = 'none';
+    setTimeout(() => {
+        scrollText.style.animation = 'textScroll 28s linear forwards';
+    }, 50);
+});
+
+// 手动关闭按钮
+closeScrollBtn.addEventListener('click', closeTalkModal);
+// 滚动播放完毕自动关闭
+scrollText.addEventListener('animationend', closeTalkModal);
+
+const particleCanvas = document.getElementById("particleCanvas");
+const ctx = particleCanvas.getContext("2d");
+let w, h;
+function resize() {
+    w = particleCanvas.width = window.innerWidth;
+    h = particleCanvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+let particles = [];
+class Particle {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        const colorList = ["#ffd700", "#ff6b9d", "#ff4477", "#4cd9ff", "#ffffff", "#ff9843"];
+        this.color = colorList[Math.floor(Math.random() * colorList.length)];
+        this.r = Math.random() * 4 + 2;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 4 + 1;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed;
+        this.life = 1;
+        this.decay = 0.018 + Math.random() * 0.012;
+    }
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy += 0.12;
+        this.life -= this.decay;
+    }
+    draw() {
+        ctx.globalAlpha = this.life;
+        ctx.beginPath();
+        ctx.arc(this.x, this.r, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+    }
+}
+function spawnParticles(x, y, count = 22) {
+    for (let i = 0; i < count; i++) {
+        particles.push(new Particle(x, y));
+    }
+}
+window.addEventListener('mousedown', e => {
+    spawnParticles(e.clientX, e.clientY);
+});
+let lastTouch = null;
+window.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    lastTouch = { x: t.clientX, y: t.clientY };
+    spawnParticles(t.clientX, t.clientY);
+});
+window.addEventListener('touchmove', e => {
+    e.preventDefault();
+    const t = e.touches[0];
+    if (lastTouch) {
+        const dx = t.clientX - lastTouch.x;
+        const dy = t.clientY - lastTouch.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist > 8) {
+            spawnParticles(t.clientX, t.clientY, 8);
+        }
+    }
+    lastTouch = { x: t.clientX, y: t.clientY };
+});
+function loopParticle() {
+    ctx.clearRect(0, 0, w, h);
+    for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.update();
+        p.draw();
+        if (p.life <= 0) {
+            particles.splice(i, 1);
+        }
+    }
+    requestAnimationFrame(loopParticle);
+}
+loopParticle();
+
+const fwCanvas = document.getElementById("fireworkCanvas");
+const fwCtx = fwCanvas.getContext("2d");
+fwCanvas.width = window.innerWidth;
+fwCanvas.height = window.innerHeight;
+window.addEventListener("resize", () => {
+    fwCanvas.width = window.innerWidth;
+    fwCanvas.height = window.innerHeight;
+});
+class FireWork {
+    constructor(x, targetY) {
+        this.x = x ?? Math.random() * fwCanvas.width;
+        this.y = fwCanvas.height;
+        this.targetY = targetY ?? Math.random() * fwCanvas.height * 0.35;
+        this.speedY = -7 - Math.random() * 4;
+        this.bursted = false;
+        this.particles = [];
+        this.color = `hsl(${Math.random() * 360}, 95%, 65%)`;
+    }
+    update() {
+        if (!this.bursted) {
+            this.y += this.speedY;
+            if (this.y <= this.targetY) {
+                this.burst();
+            }
+        } else {
+            for (let i = this.particles.length - 1; i >= 0; i--) {
+                const p = this.particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.15;
+                p.alpha -= 0.022;
+                if (p.alpha <= 0) {
+                    this.particles.splice(i, 1);
+                }
+            }
+        }
+    }
+    burst() {
+        this.bursted = true;
+        const num = 80;
+        for (let i = 0; i < num; i++) {
+            const ang = Math.PI * 2 / num * i;
+            const sp = Math.random() * 4 + 2;
+            this.particles.push({
+                x: this.x,
+                y: this.y,
+                vx: Math.cos(ang) * sp,
+                vy: Math.sin(ang) * sp,
+                color: this.color,
+                alpha: 1
+            });
+        }
+    }
+    draw() {
+        if (!this.bursted) {
+            fwCtx.beginPath();
+            fwCtx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+            fwCtx.fillStyle = "#fff";
+            fwCtx.fill();
+        } else {
+            for (let p of this.particles) {
+                fwCtx.globalAlpha = p.alpha;
+                fwCtx.beginPath();
+                fwCtx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+                fwCtx.fillStyle = p.color;
+            }
+            fwCtx.globalAlpha = 1;
+        }
+    }
+}
+let fireworks = [];
+setInterval(() => {
+    fireworks.push(new FireWork());
+}, 1400);
+function burstFireworksForBirthday() {
+    const centerX = fwCanvas.width / 2;
+    const centerY = fwCanvas.height * 0.22;
+    for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+            fireworks.push(new FireWork(
+                centerX + (Math.random() - 0.5) * 300,
+                centerY + (Math.random() - 0.5) * 80
+            ));
+        }, i * 180);
+    }
+}
+let textFireworkParticles = [];
+let textFadeOutStart = 0;
+const textShowDuration = 5500;
+function startTextFirework() {
+    const tempCanvas = document.createElement('canvas');
+    const tempCtx = tempCanvas.getContext('2d');
+    const text = "夏子凤生日快乐";
+    tempCanvas.width = 1100;
+    tempCanvas.height = 320;
+    tempCtx.fillStyle = "#000000";
+    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+    tempCtx.fillStyle = "#ffffff";
+    tempCtx.font = "bold 140px Microsoft YaHei";
+    tempCtx.textAlign = "center";
+    tempCtx.textBaseline = "middle";
+    tempCtx.fillText(text, tempCanvas.width / 2, tempCanvas.height / 2);
+    const imgData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+    const data = imgData.data;
+    const screenCenterX = fwCanvas.width / 2;
+    const screenCenterY = fwCanvas.height * 0.22;
+    const scale = Math.min(fwCanvas.width / 1400, 0.85);
+    const drawW = tempCanvas.width * scale;
+    const drawH = tempCanvas.height * scale;
+    const offsetX = screenCenterX - drawW / 2;
+    const offsetY = screenCenterY - drawH / 2;
+    textFireworkParticles = [];
+    const step = 13;
+    for (let y = 0; y < tempCanvas.height; y += step) {
+        for (let x = 0; x < tempCanvas.width; x += step) {
+            const idx = (y * tempCanvas.width + x) * 4;
+            const r = data[idx];
+            if (r > 80) {
+                const tx = offsetX + x * scale;
+                const ty = offsetY + y * scale;
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 100 + Math.random() * 180;
+                const sx = screenCenterX + Math.cos(angle) * dist;
+                const sy = screenCenterY + Math.sin(angle) * dist;
+                textFireworkParticles.push({
+                    x: sx,
+                    y: sy,
+                    targetX: tx,
+                    targetY: ty,
+                    color: `hsl(${Math.random() * 60 + 25}, 100%, 72%)`,
+                    size: 1.8 + Math.random() * 2,
+                    delay: Math.random() * 900,
+                    duration: 1600 + Math.random() * 900,
+                    start: null,
+                    done: false,
+                    alpha: 1
+                });
+            }
+        }
+    }
+    textFireworkParticles.sort(() => Math.random() - 0.5);
+    const now = performance.now();
+    textFireworkParticles.forEach(p => p.start = now + p.delay);
+    textFadeOutStart = now + textShowDuration;
+}
+function updateTextFireworkParticles(time) {
+    for (let p of textFireworkParticles) {
+        if (p.done && time >= textFadeOutStart) {
+            p.alpha = Math.max(0, p.alpha - 0.012);
+            continue;
+        }
+        if (p.done) continue;
+        if (time < p.start) continue;
+        const elapse = time - p.start;
+        const prog = Math.min(elapse / p.duration, 1);
+        const ease = prog < 0.5 ? 4 * prog * prog * prog : 1 - Math.pow(-2 * prog + 2, 3) / 2;
+        p.x += (p.targetX - p.x) * ease;
+        p.y += (p.targetY - p.y) * ease;
+        if (prog >= 1) p.done = true;
+    }
+}
+function drawTextFireworkParticles(time) {
+    for (let p of textFireworkParticles) {
+        fwCtx.save();
+        fwCtx.globalAlpha = p.alpha;
+        if (p.done) {
+            fwCtx.shadowBlur = 10;
+            fwCtx.shadowColor = p.color;
+        }
+        fwCtx.beginPath();
+        fwCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        fwCtx.fillStyle = p.color;
+        fwCtx.fill();
+        fwCtx.restore();
+    }
+}
+function fireLoop() {
+    const time = performance.now();
+    fwCtx.fillStyle = "rgba(0, 0, 0, 0.11)";
+    fwCtx.fillRect(0, 0, fwCanvas.width, fwCanvas.height);
+    for (let i = fireworks.length - 1; i >= 0; i--) {
+        const fw = fireworks[i];
+        fw.update();
+        fw.draw();
+        if (fw.bursted && fw.particles.length === 0) fireworks.splice(i, 1);
+    }
+    updateTextFireworkParticles(time);
+    drawTextFireworkParticles(time);
+    requestAnimationFrame(fireLoop);
+}
+fireLoop();
+// 成长时间轴JS
+const track = document.getElementById('timelineTrack');
+const startYear = 2008;
+const endYear = 2026;
+for(let y=startYear;y<=endYear;y++){
+    const age = y - startYear;
+    const item = document.createElement('div');
+    item.className = "year-item";
+    const dotSize = 6 + age * 0.75;
+    item.innerHTML = `
+        <div class="dot" style="width:${dotSize}px;height:${dotSize}px;"></div>
+        <div class="year-num">${y}</div>
+        <div class="age-text">${age}岁</div>
+    `;
+    track.appendChild(item);
+}
+let offsetX = 0;
+let isDrag = false;
+let startPointerX = 0;
+let userTouch = false;
+let userTouchTimer = null;
+const autoSpeed = 0.32;
+track.addEventListener('mousedown',e=>{
+    isDrag = true;
+    userTouch = true;
+    clearTimeout(userTouchTimer);
+    startPointerX = e.pageX;
+});
+document.addEventListener('mouseup',()=>{
+    isDrag=false;
+    userTouchTimer = setTimeout(()=>userTouch=false,2500);
+});
+document.addEventListener('mousemove',e=>{
+    if(!isDrag) return;
+    const dx = e.pageX - startPointerX;
+    offsetX += dx;
+    startPointerX = e.pageX;
+    track.style.transform = `translateX(${offsetX}px)`;
+});
+track.addEventListener('touchstart',e=>{
+    userTouch = true;
+    clearTimeout(userTouchTimer);
+    startPointerX = e.touches[0].pageX;
+});
+track.addEventListener('touchmove',e=>{
+    e.preventDefault();
+    const dx = e.touches[0].pageX - startPointerX;
+    offsetX += dx;
+    startPointerX = e.touches[0];
+    track.style.transform = `translateX(${offsetX}px)`;
+});
+track.addEventListener('touchend',()=>{
+    userTouchTimer = setTimeout(()=>userTouch=false,2500);
+});
+function autoScrollLoop(){
+    if(!userTouch){
+        offsetX -= autoSpeed;
+        const trackW = track.scrollWidth;
+        if(offsetX < -trackW * 0.5){
+            offsetX = 0;
+        }
+        track.style.transform = `translateX(${offsetX}px)`;
+    }
+    requestAnimationFrame(autoScrollLoop);
+}
+autoScrollLoop();
+setTimeout(()=>{
+    offsetX = -(track.scrollWidth - document.querySelector('.timeline-inner').clientWidth);
+    track.style.transform = `translateX(${offsetX}px)`;
+},200);
+</script>
+</body>
+</html>
