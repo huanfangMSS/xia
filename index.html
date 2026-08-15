@@ -5,19 +5,77 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>祝夏子凤生日快乐</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
 body {
   background:#050522;
   color:#fff;
-  font-family:system-ui, sans-serif;
+  font-family:system-ui, "Microsoft Yahei", sans-serif;
   min-height:100vh;
   overflow-x:hidden;
 }
-.music-btn{
+
+#fireCanvas {
+  position:fixed;
+  inset:0;
+  width:100vw;
+  height:100vh;
+  pointer-events:none;
+  z-index:1;
+}
+
+.wrapper {
+  position:relative;
+  z-index:2;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  text-align:center;
+}
+
+h1 {
+  font-size:clamp(1.8rem,5vw,3.4rem);
+  color:#ffdd77;
+  text-shadow:0 0 10px #ffaa22, 0 0 20px #ff6622;
+  margin-bottom:40px;
+}
+
+.btn-group {
+  display:flex;
+  gap:16px;
+  flex-wrap:wrap;
+  justify-content:center;
+  margin-bottom:70px;
+}
+
+button {
+  padding:12px 28px;
+  font-size:17px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(135deg,#ff6e86,#ffbc40);
+  color:#111;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button:active {
+  transform:scale(0.97);
+}
+
+.music-btn {
   position:fixed;
   top:12px;
   right:12px;
-  width:42px;height:42px;
+  width:42px;
+  height:42px;
   border-radius:50%;
   background:rgba(255,255,255,0.12);
   border:2px solid #ffd700;
@@ -29,52 +87,8 @@ body {
   z-index:999;
   cursor:pointer;
 }
-#fireworkCanvas{
-  position:fixed;
-  inset:0;
-  width:100vw;
-  height:100vh;
-  pointer-events:none;
-  z-index:1;
-}
-.container{
-  position:relative;
-  z-index:2;
-  min-height:100vh;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  text-align:center;
-}
-h1{
-  font-size:clamp(1.8rem,5vw,3.4rem);
-  color:#ffdd77;
-  text-shadow:0 0 10px #ffaa22;
-  margin-bottom:40px;
-}
-.btn-group{
-  display:flex;
-  gap:16px;
-  flex-wrap:wrap;
-  justify-content:center;
-  margin-bottom:70px;
-}
-.btn{
-  padding:12px 28px;
-  font-size:17px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(135deg,#ff6e86,#ffbc40);
-  color:#111;
-  font-weight:bold;
-  cursor:pointer;
-}
-.btn:active{transform:scale(0.97);}
 
-/* 弹窗遮罩 */
-.mask{
+.mask {
   position:fixed;
   inset:0;
   background:rgba(0,0,0,0.85);
@@ -84,15 +98,21 @@ h1{
   justify-content:center;
   padding:15px;
 }
-.card-box{
+
+.card-box {
   width:min(92vw,500px);
   background:#181836;
   border:2px solid #ffcc66;
   border-radius:14px;
   padding:22px;
 }
-.card-box h2{color:#ffdd88;margin-bottom:14px;}
-textarea{
+
+.card-box h2 {
+  color:#ffdd88;
+  margin-bottom:14px;
+}
+
+textarea {
   width:100%;
   min-height:130px;
   background:#0e0e28;
@@ -102,14 +122,14 @@ textarea{
   padding:10px;
   font-size:16px;
 }
-.bottom-bar{
+
+.bottom-bar {
   margin-top:14px;
   display:flex;
   justify-content:flex-end;
 }
 
-/* 片尾滚动字幕 */
-.scroll-wrap{
+.scroll-wrap {
   position:fixed;
   inset:0;
   background:#000;
@@ -117,14 +137,16 @@ textarea{
   display:none;
   overflow:hidden;
 }
-.scroll-input-area{
+
+.scroll-input-area {
   position:absolute;
   top:15px;
   left:15px;
   right:15px;
   z-index:10;
 }
-.scroll-close{
+
+.scroll-close {
   position:absolute;
   top:12px;
   right:12px;
@@ -136,7 +158,8 @@ textarea{
   border-radius:6px;
   cursor:pointer;
 }
-.scroll-text{
+
+.scroll-text {
   position:absolute;
   width:90%;
   max-width:580px;
@@ -150,8 +173,7 @@ textarea{
   white-space:pre-wrap;
 }
 
-/* 时间轴 */
-.timeline-box{
+.timeline-box {
   width:100%;
   max-width:1050px;
   height:130px;
@@ -159,7 +181,8 @@ textarea{
   border-top:1px solid rgba(255,220,120,0.3);
   border-bottom:1px solid rgba(255,220,120,0.3);
 }
-.timeline-inner{
+
+.timeline-inner {
   display:flex;
   align-items:center;
   height:100%;
@@ -167,31 +190,81 @@ textarea{
   white-space:nowrap;
   animation:run 24s linear infinite;
 }
-@keyframes run{
-  0%{transform:translateX(0);}
-  100%{transform:translateX(-50%);}
+
+@keyframes run {
+  0% { transform:translateX(0); }
+  100% { transform:translateX(-50%); }
 }
-.t-item{
+
+.t-item {
   display:flex;
   flex-direction:column;
   align-items:center;
   min-width:64px;
 }
-.t-year{font-size:19px;color:#ffdd77;font-weight:bold;}
-.t-age{font-size:14px;color:#ffaaaa;margin-top:3px;}
 
-audio{display:none;}
+.t-year {
+  font-size:19px;
+  color:#ffdd77;
+  font-weight:bold;
+}
+
+.t-age {
+  font-size:14px;
+  color:#ffaaaa;
+  margin-top:3px;
+}
+
+audio {
+  display:none;
+}
 </style>
 </head>
 <body>
-<div class="music-btn" id="musicBtn">🔊</div>
-<canvas id="fire"></canvas>
 
-<div class="container">
-  <h1>🎉 祝夏子凤生日快乐 🎉</h1>
+<!-- ===================== 后期可修改文字配置区 ===================== -->
+<script>
+const CONFIG = {
+  // 主标题
+  pageTitle: "祝夏子凤生日快乐",
+  mainHeading: "🎉 祝夏子凤生日快乐 🎉",
+
+  // 按钮文字
+  cardButton: "庆生卡片",
+  talkButton: "我想对你说",
+  closeCardButton: "关闭贺卡",
+  closeScrollButton: "关闭",
+
+  // 庆生卡片
+  cardTitle: "✍️写下祝福",
+  cardPlaceholder: "输入你想说的话...",
+
+  // 我想对你说
+  talkPlaceholder: "自定义片尾滚动文字，支持多行",
+  defaultTalkText: "致夏子凤\n岁岁常欢愉\n年年皆胜意\n生日快乐！",
+
+  // 关闭贺卡后烟花显示的文字
+  fireText: "夏子凤生日快乐",
+
+  // 时间轴
+  startYear: 2008,
+  endYear: 2026,
+
+  // 背景音乐文件名，后期可替换
+  bgMusicFile: "bg.mp3",
+  talkMusicFile: "talk.mp3"
+};
+</script>
+<!-- ===================== 配置区结束，上面就是后期要改的地方 ===================== -->
+
+<div class="music-btn" id="musicBtn">🔊</div>
+<canvas id="fireCanvas"></canvas>
+
+<div class="wrapper">
+  <h1 id="mainTitle"></h1>
   <div class="btn-group">
-    <button class="btn" id="openCard">庆生卡片</button>
-    <button class="btn" id="openTalk">我想对你说</button>
+    <button id="openCard"></button>
+    <button id="openTalk"></button>
   </div>
   <div class="timeline-box">
     <div class="timeline-inner" id="timeLineDom"></div>
@@ -201,10 +274,10 @@ audio{display:none;}
 <!-- 贺卡弹窗 -->
 <div class="mask" id="cardMask">
   <div class="card-box">
-    <h2>✍️写下祝福</h2>
-    <textarea id="cardTextarea" placeholder="输入你想说的话..."></textarea>
+    <h2 id="cardTitle"></h2>
+    <textarea id="cardTextarea"></textarea>
     <div class="bottom-bar">
-      <button class="btn" id="closeCard">关闭贺卡</button>
+      <button id="closeCard"></button>
     </div>
   </div>
 </div>
@@ -212,39 +285,55 @@ audio{display:none;}
 <!-- 片尾滚动字幕 -->
 <div class="scroll-wrap" id="scrollWrap">
   <div class="scroll-input-area">
-    <textarea id="scrollTextarea" placeholder="自定义片尾滚动文字，支持多行"></textarea>
+    <textarea id="scrollTextarea"></textarea>
   </div>
-  <button class="scroll-close" id="closeScroll">关闭</button>
+  <button class="scroll-close" id="closeScroll"></button>
   <div class="scroll-text" id="scrollDom"></div>
 </div>
 
 <audio id="bgAudio" loop>
-  <source src="bg.mp3">
+  <source id="bgSource" src="">
+</audio>
 
 <audio id="talkAudio" loop>
-  <source src="talk.mp3">
-
+  <source id="talkSource" src="">
+</audio>
 
 <script>
-window.onload = function(){
-  // 1、生成时间轴 2008~2026
+window.addEventListener("load", function(){
+  // 先把配置文字写入页面
+  document.title = CONFIG.pageTitle;
+  document.getElementById("mainTitle").innerText = CONFIG.mainHeading;
+  document.getElementById("openCard").innerText = CONFIG.cardButton;
+  document.getElementById("openTalk").innerText = CONFIG.talkButton;
+  document.getElementById("closeCard").innerText = CONFIG.closeCardButton;
+  document.getElementById("closeScroll").innerText = CONFIG.closeScrollButton;
+  document.getElementById("cardTitle").innerText = CONFIG.cardTitle;
+  document.getElementById("cardTextarea").placeholder = CONFIG.cardPlaceholder;
+  document.getElementById("scrollTextarea").placeholder = CONFIG.talkPlaceholder;
+
+  document.getElementById("bgSource").src = CONFIG.bgMusicFile;
+  document.getElementById("talkSource").src = CONFIG.talkMusicFile;
+
+  const bgAudio = document.getElementById("bgAudio");
+  const talkAudio = document.getElementById("talkAudio");
+
+  // 时间轴
   const timeLineDom = document.getElementById("timeLineDom");
   let tpl = "";
-  for(let y=2008;y<=2026;y++){
-    let age = y - 2008;
+  for(let y = CONFIG.startYear; y <= CONFIG.endYear; y++){
+    let age = y - CONFIG.startYear;
     tpl += `<div class="t-item"><div class="t-year">${y}年</div><div class="t-age">${age}岁</div></div>`;
   }
   timeLineDom.innerHTML = tpl + tpl;
 
-  // 2、音频
-  const bgAudio = document.getElementById("bgAudio");
-  const talkAudio = document.getElementById("talkAudio");
+  // 音频控制
   const musicBtn = document.getElementById("musicBtn");
   let audioOn = true;
 
-  document.body.addEventListener("click",function(){
-    bgAudio.play().catch(()=>{});
-  },{once:true});
+  document.body.addEventListener("click", function(){
+    bgAudio.play().catch(function(){});
+  }, { once: true });
 
   musicBtn.onclick = function(){
     if(audioOn){
@@ -254,26 +343,28 @@ window.onload = function(){
       audioOn = false;
     }else{
       if(document.getElementById("scrollWrap").style.display === "block"){
-        talkAudio.play().catch(()=>{});
+        talkAudio.play().catch(function(){});
       }else{
-        bgAudio.play().catch(()=>{});
+        bgAudio.play().catch(function(){});
       }
       musicBtn.innerText = "🔊";
       audioOn = true;
     }
-  }
+  };
 
-  //3、庆生卡片
+  // 庆生卡片
   const cardMask = document.getElementById("cardMask");
+
   document.getElementById("openCard").onclick = function(){
     cardMask.style.display = "flex";
-  }
+  };
+
   document.getElementById("closeCard").onclick = function(){
     cardMask.style.display = "none";
-    drawWordFire("夏子凤生日快乐");
-  }
+    drawWordFire(CONFIG.fireText);
+  };
 
-  //4、我想对你说片尾滚动
+  // 我想对你说
   const scrollWrap = document.getElementById("scrollWrap");
   const scrollDom = document.getElementById("scrollDom");
   const scrollTextarea = document.getElementById("scrollTextarea");
@@ -282,36 +373,42 @@ window.onload = function(){
     scrollWrap.style.display = "block";
     bgAudio.pause();
     talkAudio.currentTime = 0;
-    talkAudio.play().catch(()=>{});
+    talkAudio.play().catch(function(){});
     runScroll();
-  }
+  };
+
   document.getElementById("closeScroll").onclick = function(){
     scrollWrap.style.display = "none";
     talkAudio.pause();
-    bgAudio.play().catch(()=>{});
-  }
+    bgAudio.play().catch(function(){});
+  };
+
   function runScroll(){
-    scrollDom.innerText = scrollTextarea.value || "致夏子凤\n岁岁常欢愉\n年年皆胜意\n生日快乐！";
+    scrollDom.innerText = scrollTextarea.value || CONFIG.defaultTalkText;
     scrollDom.style.bottom = "-100vh";
     scrollDom.style.transition = "none";
-    setTimeout(()=>{
+    setTimeout(function(){
       scrollDom.style.transition = "bottom 22s linear";
       scrollDom.style.bottom = "120vh";
-    },60);
+    }, 60);
   }
 
-  //5、烟花 canvas
-  const canvas = document.getElementById("fire");
+  // 烟花
+  const canvas = document.getElementById("fireCanvas");
   const ctx = canvas.getContext("2d");
-  let W,H;
+
+  let W, H;
+
   function resize(){
     W = canvas.width = window.innerWidth;
     H = canvas.height = window.innerHeight;
   }
+
   resize();
-  window.addEventListener("resize",resize);
+  window.addEventListener("resize", resize);
 
   let particles = [];
+
   const colorList = [
     "rgba(255,212,80,1)",
     "rgba(255,85,125,1)",
@@ -320,92 +417,136 @@ window.onload = function(){
     "rgba(242,124,255,1)"
   ];
 
-  class Particle{
-    constructor(x,y,c,vx,vy,size,life){
-      this.x=x;this.y=y;this.c=c;
-      this.vx=vx;this.vy=vy;
-      this.size=size;
-      this.life=life;this.max=life;
+  class Particle {
+    constructor(x, y, c, vx, vy, size, life){
+      this.x = x;
+      this.y = y;
+      this.c = c;
+      this.vx = vx;
+      this.vy = vy;
+      this.size = size;
+      this.life = life;
+      this.max = life;
     }
+
     update(){
       this.x += this.vx;
       this.y += this.vy;
       this.vy += 0.06;
-      this.life -=1;
+      this.life -= 1;
     }
+
     render(){
       let a = this.life / this.max;
       ctx.beginPath();
-      ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
-      ctx.fillStyle = this.c.replace("1)",a+")");
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fillStyle = this.c.replace("1)", a + ")");
       ctx.fill();
     }
   }
 
-  //普通烟花
   function fireOne(){
-    let x = Math.random()*W;
+    let x = Math.random() * W;
     let startY = H;
-    let targetY = H*0.12 + Math.random()*H*0.38;
-    let c = colorList[Math.floor(Math.random()*colorList.length)];
-    let rocket = {x:x,y:startY,vy:-7-Math.random()*2.5,target:targetY,color:c};
+    let targetY = H * 0.12 + Math.random() * H * 0.38;
+    let c = colorList[Math.floor(Math.random() * colorList.length)];
+
+    let rocket = {
+      x: x,
+      y: startY,
+      vy: -7 - Math.random() * 2.5,
+      target: targetY,
+      color: c
+    };
+
     function fly(){
       rocket.y += rocket.vy;
+
       if(rocket.y <= rocket.target){
-        for(let i=0;i<75;i++){
-          let ang = Math.PI*2*i/75;
-          let sp = 1.2+Math.random()*2.2;
-          particles.push(new Particle(rocket.x,rocket.y,rocket.color,Math.cos(ang)*sp,Math.sin(ang)*sp,2,90+Math.random()*60));
+        for(let i = 0; i < 75; i++){
+          let ang = Math.PI * 2 * i / 75;
+          let sp = 1.2 + Math.random() * 2.2;
+
+          particles.push(new Particle(
+            rocket.x,
+            rocket.y,
+            rocket.color,
+            Math.cos(ang) * sp,
+            Math.sin(ang) * sp,
+            2,
+            90 + Math.random() * 60
+          ));
         }
         return;
       }
+
       requestAnimationFrame(fly);
     }
+
     fly();
   }
 
-  //文字烟花
   function drawWordFire(text){
     let tempCvs = document.createElement("canvas");
     let tctx = tempCvs.getContext("2d");
-    tempCvs.width = W*0.75;
+
+    tempCvs.width = W * 0.75;
     tempCvs.height = 200;
-    tctx.fillStyle="#ffffff";
-    tctx.font="bold 76px sans-serif";
-    tctx.textAlign="center";
-    tctx.fillText(text,tempCvs.width/2,120);
-    let img = tctx.getImageData(0,0,tempCvs.width,tempCvs.height);
-    let offX = W/2 - tempCvs.width/2;
-    let offY = H*0.32;
-    for(let px=0;px<img.width;px+=6){
-      for(let py=0;py<img.height;py+=6){
-        let i = (py*img.width + px)*4;
-        if(img.data[i]>120){
+
+    tctx.fillStyle = "#ffffff";
+    tctx.font = "bold 76px sans-serif";
+    tctx.textAlign = "center";
+    tctx.fillText(text, tempCvs.width / 2, 120);
+
+    let img = tctx.getImageData(0, 0, tempCvs.width, tempCvs.height);
+
+    let offX = W / 2 - tempCvs.width / 2;
+    let offY = H * 0.32;
+
+    for(let px = 0; px < img.width; px += 6){
+      for(let py = 0; py < img.height; py += 6){
+        let i = (py * img.width + px) * 4;
+
+        if(img.data[i] > 120){
           let cx = offX + px;
           let cy = offY + py;
-          let cc = colorList[Math.floor(Math.random()*colorList.length)];
-          particles.push(new Particle(cx,cy,cc,(Math.random()-0.5)*1.1,(Math.random()-0.5)*1.1,2.4,130));
+          let cc = colorList[Math.floor(Math.random() * colorList.length)];
+
+          particles.push(new Particle(
+            cx,
+            cy,
+            cc,
+            (Math.random() - 0.5) * 1.1,
+            (Math.random() - 0.5) * 1.1,
+            2.4,
+            130
+          ));
         }
       }
     }
   }
 
   function loop(){
-    ctx.fillStyle="rgba(5,5,34,0.17)";
-    ctx.fillRect(0,0,W,H);
-    for(let i=particles.length-1;i>=0;i--){
+    ctx.fillStyle = "rgba(5,5,34,0.17)";
+    ctx.fillRect(0, 0, W, H);
+
+    for(let i = particles.length - 1; i >= 0; i--){
       let p = particles[i];
       p.update();
       p.render();
-      if(p.life <=0){
-        particles.splice(i,1);
+
+      if(p.life <= 0){
+        particles.splice(i, 1);
       }
     }
+
     requestAnimationFrame(loop);
   }
+
   loop();
-  setInterval(fireOne,1300);
-}
+  setInterval(fireOne, 1300);
+});
 </script>
+
 </body>
 </html>
